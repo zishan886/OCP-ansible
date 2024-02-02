@@ -13,8 +13,8 @@
     kubeconfig: "/root/ansible_workdir/hcp-kubeconfig"
   register: nodes
   until: nodes.resources | length == 0
-  retries: 30
-  delay: 10
+  retries: 90
+  delay: 60
 
 - name: Wait for Agentmachines to delete
   k8s_info:
@@ -98,6 +98,14 @@
     state: absent
   when: hypershift.mce.delete == true
 
+- name: Wait for managed cluster resource to be deleted 
+  shell: oc get managedcluster "{{ hypershift.hcp.hosted_cluster_name }}"
+  register: managedcluster
+  until: managedcluster.rc != 0
+  retries: 40
+  delay: 20
+  when: hypershift.mce.delete == true
+
 - name: Delete MCE Instance
   k8s:
     name: "{{ hypershift.mce.instance_name }}"
@@ -107,6 +115,14 @@
     state: absent
     wait: yes
     wait_timeout: 400
+  when: hypershift.mce.delete == true
+
+- name: Wait for local-cluster components to be deleted
+  shell: oc get ns local-cluster
+  register: localcluster
+  until: localcluster.rc != 0
+  retries: 40
+  delay: 20
   when: hypershift.mce.delete == true
 
 - name: Delete MCE Subscription
