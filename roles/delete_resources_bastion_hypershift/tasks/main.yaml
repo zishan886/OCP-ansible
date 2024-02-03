@@ -107,6 +107,10 @@
   when: hypershift.mce.delete == true
   ignore_errors: yes
 
+- fail:
+    msg: "Managed cluster resource for HCP is not getting deleted"
+  when: managedcluster.rc == 0 and managedcluster.attempts >= 40
+
 - name: Delete MCE Instance
   k8s:
     name: "{{ hypershift.mce.instance_name }}"
@@ -126,6 +130,10 @@
   delay: 20
   when: hypershift.mce.delete == true
   ignore_errors: yes
+
+- fail:
+    msg: "local-cluster namespace is still present"
+  when: localcluster.rc == 0 and localcluster.attempts >= 40
 
 - name: Delete MCE Subscription
   k8s:
