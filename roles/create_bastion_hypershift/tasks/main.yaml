@@ -48,7 +48,7 @@
       chmod 0600 /root/.ssh/authorized_keys
 
 - name: Create qemu image for bastion
-  command: qemu-img create -f qcow2 /home/libvirt/images/{{ hypershift.hcp.hosted_cluster_name }}-bastion.qcow2 100G
+  command: qemu-img create -f qcow2 {{ hypershift.agent_parms.storage.pool_path }}{{ hypershift.hcp.hosted_cluster_name }}-bastion.qcow2 100G
 
 - name: Create bastion 
   shell: |
