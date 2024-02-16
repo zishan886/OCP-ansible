@@ -3,6 +3,8 @@ kind: AgentServiceConfig
 metadata:
   name: agent
 spec:
+  mirrorRegistryRef:
+    name: mirror-config
   databaseStorage:
     accessModes:
     - ReadWriteOnce

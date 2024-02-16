@@ -3,6 +3,14 @@
   shell: curl -s {{ hypershift.asc.url_for_ocp_release_file }}  | awk '/machine-os / { print $2 }'
   register: ocp_release_version
 
+- name: Create Config map mirror-config ( For updating AgentServiceConfig with the brew mirror information )
+  template: 
+    src: mirror-config.yml.j2
+    dest: /root/ansible_workdir/mirror-config.yaml
+
+- name: Deploy Config map - mirror config
+  shell: oc apply -f /root/ansible_workdir/mirror-config.yaml
+
 - name: Create agenterviceconfig.yaml
   template: 
     src: agent_service_config.yaml.j2
